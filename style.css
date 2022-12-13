@@ -37,7 +37,7 @@ span input:read-only{
     border: 1px black solid;
     border-radius: 5px;
     align-items: stretch;
-    min-height: 250px;
+    min-height: 200px;
 }
 
 .todo-list li{
@@ -47,4 +47,29 @@ span input:read-only{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.finished-list{
+    display: flex;
+    list-style-type: none;
+    padding:10px;
+    flex-direction: column;
+    gap:10px;
+    border: 1px black solid;
+    border-radius: 5px;
+    align-items: stretch;
+    min-height: 200px;
+}
+
+.finished-list li{
+    border: 1px black solid;
+    border-radius: 5px;
+    padding:10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.finished-list li input{
+    text-decoration: line-through;
 }

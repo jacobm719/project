@@ -48,12 +48,21 @@ const APIs = (() => {
         }).then((res) => res.json());
     };
 
+    const finished = (id, done) => {
+        return fetch(URL + `/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify({"done": done}),
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => res.json());
+    };
+
     return {
         addTodo,
         removeTodo,
         getTodos,
         completeTodo,
         editTodo,
+        finished,
     };
 })();
 
@@ -81,7 +90,7 @@ const Model = (() => {
         }
     }
 
-    let { getTodos, removeTodo, addTodo, completeTodo, editTodo } = APIs;
+    let { getTodos, removeTodo, addTodo, completeTodo, editTodo, finished } = APIs;
 
     return {
         State,
@@ -90,6 +99,7 @@ const Model = (() => {
         addTodo,
         completeTodo,
         editTodo,
+        finished,
     };
 })();
 
@@ -97,27 +107,36 @@ const Model = (() => {
 const View = (() => {
     const formEl = document.querySelector(".form");
     const todoListEl = document.querySelector(".todo-list");
+    const finishedListEl = document.querySelector(".finished-list");
     const updateTodoList = (todos) => {
         let template = "";
+        let templateFinished = "";
         todos.forEach((todo) => {
-            if (todo.status) {
-                const todoTemplate = `<li><span><input type="text" id="listid${todo.id}" value="${todo.title}"></span><button class="btn--edit" id="${todo.id}">edit</button><button class="btn--delete" id="${todo.id}">remove</button></li>`;
-                template += todoTemplate;
-            }
-            else {
-                const todoTemplate = `<li><span><input type="text" id="listid${todo.id}" value="${todo.title}" readonly></span><button class="btn--edit" id="${todo.id}">edit</button><button class="btn--delete" id="${todo.id}">remove</button></li>`;
-                template += todoTemplate;                
+            if (!todo.done) {
+                if (todo.status) {
+                    const todoTemplate = `<li><span><input type="text" id="listid${todo.id}" value="${todo.title}"></span><button class="btn--edit" id="${todo.id}">edit</button><button class="btn--delete" id="${todo.id}">remove</button></li>`;
+                    template += todoTemplate;
+                }
+                else {
+                    const todoTemplate = `<li><span><input type="text" id="listid${todo.id}" value="${todo.title}" readonly></span><button class="btn--edit" id="${todo.id}">edit</button><button class="btn--delete" id="${todo.id}">remove</button></li>`;
+                    template += todoTemplate;
+                }
+            } else {
+                const finishedTemplate = `<li><span><input type="text" id="listid${todo.id}" value="${todo.title}" readonly></span><button class="btn--delete" id="${todo.id}">remove</button></li>`;
+                templateFinished += finishedTemplate;
             }
         });
-        if (todos.length === 0) {
+        if (template == "") {
             template = "no task to display";
         }
         todoListEl.innerHTML = template;
+        finishedListEl.innerHTML = templateFinished;
     };
 
     return {
         formEl,
         todoListEl,
+        finishedListEl,
         updateTodoList,
     };
 })();
@@ -149,7 +168,7 @@ const ViewModel = ((View, Model) => {
                 return;
             }
 
-            const newTodo = { title , status:false};
+            const newTodo = { title , status:false, done:false};
             Model.addTodo(newTodo)
                 .then((res) => {
                     state.todos = [res, ...state.todos];
@@ -162,13 +181,15 @@ const ViewModel = ((View, Model) => {
     };
 
     const removeTodo = () => {
-        View.todoListEl.addEventListener("click",(event)=>{
-            const id = event.target.id;
-            if (event.target.className === "btn--delete") {
-                Model.removeTodo(id).then(res=>{
-                    state.todos = state.todos.filter(todo=> +todo.id !== +id);
-                }).catch(err=>alert(`delete todo failed: ${err}`));
-            }
+        [View.todoListEl, View.finishedListEl].forEach((listEl) => {
+            listEl.addEventListener("click",(event)=>{
+                const id = event.target.id;
+                if (event.target.className === "btn--delete") {
+                    Model.removeTodo(id).then(res=>{
+                        state.todos = state.todos.filter(todo=> +todo.id !== +id);
+                    }).catch(err=>alert(`delete todo failed: ${err}`));
+                }
+            });
         });
     };
 
@@ -208,12 +229,33 @@ const ViewModel = ((View, Model) => {
         });
     };
 
+    const finished = () => {
+        [View.todoListEl, View.finishedListEl].forEach((listEl) => {
+            listEl.addEventListener("click", (event)=>{
+                const id = event.target.id.substr(6);
+                const inputBox = event.target.tagName;
+                if (inputBox === "INPUT") {
+                    let curIndex = -1;
+                    for (let i = 0;  i < state.todos.length; i++) {
+                        if (state.todos[i].id === parseInt(id)) {
+                            curIndex = i;
+                            break;
+                        }
+                    }
+                    let done = !state.todos[curIndex].done;
+                    Model.finished(id, done);
+                }
+            });
+        });
+    };
+
     const bootstrap = () => {
         addTodo();
         getTodos();
         removeTodo();
         completeTodo();
         editTodo();
+        finished();
         state.subscribe(() => {
             View.updateTodoList(state.todos);
         });
