@@ -1,16 +1,54 @@
+*{
+    font-size: 20px;
+    text-align: center;
+}
+
+*:focus{
+    outline: none;
+}
+
 html{
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #f0f0f0;
+    font-family: sans-serif;
 }
 
 header{
     text-align: center;
 }
 
+#submit{
+    background-color: #008cba;
+    color: #f0f0f0;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 7px;
+    border-style: none;
+}
+
+#input_submit{
+    font-size: 20px;
+    border-radius: 7px;
+    width: 250px;
+    background-color: #f0f0f0;
+    border: 2px solid lightgrey;
+}
+
+input{
+    background-color: white;
+    text-align: center;
+    width: 325px;
+    border-radius: 5px;
+    border: 2px solid lightgrey;
+}
+
 span input:read-only{
+    background-color: #e6e2d3;
     border: none;
     outline: none;
+    cursor: pointer;
 }
 
 .todo__container{
@@ -19,34 +57,42 @@ span input:read-only{
     align-items: stretch;
     gap:20px;
     width: fit-content;
-
 }
 
 .form{
     display: flex;
     gap:10px;
     flex-direction: row;
+    justify-content: center;
+}
+
+.todos{
+    border: 3px #e6e2d3 solid;
+    border-radius: 15px;
+    min-height: 500px;
+    min-width: 500px;
 }
 
 .todo-list{
     display: flex;
     list-style-type: none;
-    padding:10px;
+    padding: 10px;
     flex-direction: column;
-    gap:10px;
-    border: 1px black solid;
-    border-radius: 5px;
+    gap: 10px;
     align-items: stretch;
-    min-height: 200px;
 }
 
 .todo-list li{
-    border: 1px black solid;
-    border-radius: 5px;
-    padding:10px;
+    border: 2px #e6e2d3 solid;
+    border-radius: 10px;
+    background-color: #e6e2d3;
+    min-height: 30px;
+    padding: 5px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 10px;
+    justify-content: right;
+    align-items: center;
 }
 
 .finished-list{
@@ -55,21 +101,51 @@ span input:read-only{
     padding:10px;
     flex-direction: column;
     gap:10px;
-    border: 1px black solid;
-    border-radius: 5px;
     align-items: stretch;
     min-height: 200px;
 }
 
 .finished-list li{
-    border: 1px black solid;
-    border-radius: 5px;
+    border: 2px;
+    border-radius: 10px;
+    background-color: #e6e2d3;
+    min-height: 30px;
     padding:10px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 
 .finished-list li input{
     text-decoration: line-through;
+    color: gray;
+    width: 400px;
+}
+
+.btn--edit{
+    width: 40px;
+    fill: white;
+    background-color: #008cba;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn--delete{
+    width: 40px;
+    fill: white;
+    background-color: #c94c4c;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+svg{
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    fill: #f0f0f0;
+    cursor: pointer;
+    pointer-events: none;
 }
